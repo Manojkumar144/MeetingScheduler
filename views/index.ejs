@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h2>Slots Available</h2>
+
+<!-- show the slotsAvailable from slotsTable -->
+<% slots.forEach(slot => { %>
+  <% if (slot.slotsAvailable > 0) { %>
+    <button class="myBtn" data-meeting-url="<%= slot.meetingUrl %>" data-time="<%= slot.time %>" data-slot-id="<%= slot.id %>">
+      <p><%= slot.time %></p>
+      </br>
+      <p><%= slot.slotsAvailable %> available</p>
+    </button>
+    </br>
+  <% } %>
+<% }); %>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <form action="/addUser" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" >
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" >
+      <input type="hidden" id="meetingUrl" name="meetingUrl" value="">
+      <input type="hidden" id="time" name="time" value="">
+      <input type="hidden" name="slotId" id="slotId" value="">
+      <button type="submit" id="bookBtn">BOOK</button>
+      <button type="button" id="closeBtn" class="close">CLOSE</button>
+    </form>
+  </div>
+</div>
+
+<!-- Meeting Details div -->
+<h1>Scheduled Meetings</h1>
+<% slotsBookings.forEach(slotBooking => { %>
+  <div class="meetingDetails">
+    <form action="/delete-meeting" method="POST">
+      <h3>Hi <%= slotBooking.name %>,</h3>
+      <% if (slotBooking) { %>
+        <p>Please join the meeting via this <a href="<%= slotBooking.meetingUrl %>"><%= slotBooking.meetingUrl %></a> at time <%= slotBooking.time %></p>
+      <% } else { %>
+        <p>No slot available</p>
+      <% } %>
+      <button type="submit" name="name" value="<%= slotBooking.name %>"  id="cancelBtn">Cancel</button>
+    </form>
+  </div>
+<% }); %>
+
+<script>
+  // Get the modal
+  var modal = document.getElementById("myModal");
+  var btns = document.getElementsByClassName("myBtn");
+  var closeBtn = document.getElementById("closeBtn");
+  var meetingUrlInput = document.getElementById("meetingUrl");
+  var timeInput = document.getElementById("time");
+  var slotIdInput = document.getElementById("slotId");
+
+  // When any button is clicked, open the modal and set meeting details
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].onclick = function() {
+      modal.style.display = "block";
+      meetingUrlInput.value = this.getAttribute("data-meeting-url");
+      timeInput.value = this.getAttribute("data-time");
+      slotIdInput.value = this.getAttribute("data-slot-id"); 
+    };
+  }
+
+  // When the user clicks the close button, close the modal
+  closeBtn.onclick = function() {
+    modal.style.display = "none";
+  };
+
+  //  alert to display confirmation of the slot 
+  function showConfirmation() {
+    alert('Slot confirmed!, Please find the meeting Details below!!!');
+  }
+
+  // event listener to show the alert when the user clicks on the bookbutton
+  document.getElementById("bookBtn").addEventListener("click", showConfirmation);
+
+</script>
+
+</body>
+</html>
